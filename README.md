@@ -1,5 +1,5 @@
 # Advanced Lane Detection
-![annotated](example_images/annotated_test2.png)
+![annotated](output_images/annotated_test2.png)
 ## Overview
 Detect lanes using computer vision techniques. This project is part of the [Udacity Self-Driving Car Nanodegree](https://www.udacity.com/drive), and much of the code is leveraged from the lecture notes.
 
@@ -40,7 +40,7 @@ To illustrate, the following is the calibration image 'camera_cal/calibration5.j
 ![calibration5](camera_cal/calibration5.jpg)
 
 Here is the same image undistored via camera calibration:
-![undist_cal5](example_images/undistort_calibration.png)
+![undist_cal5](output_images/undistort_calibration.png)
 
 The final calibration matrices are saved in the pickle file 'calibrate_camera.p'
 
@@ -52,9 +52,9 @@ The following describes and illustrates the steps involved in the lane detection
 ### Undistort image
 Using the camera calibration matrices in 'calibrate_camera.p', I undistort the input image. Below is the example image above, undistorted:
 
-![undist](example_images/undistort_test2.png)
+![undist](output_images/undistort_test2.png)
 
-The code to perform camera calibration is in 'calibrate_camera.py'. For all images in 'test_images/\*.jpg', the undistorted version of that image is saved in 'example_images/undistort_\*.png'.
+The code to perform camera calibration is in 'calibrate_camera.py'. For all images in 'test_images/\*.jpg', the undistorted version of that image is saved in 'output_images/undistort_\*.png'.
 
 ### Thresholded binary image
 The next step is to create a thresholded binary image, taking the undistorted image as input. The goal is to identify pixels that are likely to be part of the lane lines. In particular, I perform the following:
@@ -68,9 +68,9 @@ The next step is to create a thresholded binary image, taking the undistorted im
 
 Here is the example image, transformed into a binary image by combining the above thresholded binary filters:
 
-![binary](example_images/binary_test2.png)
+![binary](output_images/binary_test2.png)
 
-The code to generate the thresholded binary image is in 'combined_thresh.py', in particular the function `combined_thresh()`. For all images in 'test_images/\*.jpg', the thresholded binary version of that image is saved in 'example_images/binary_\*.png'.
+The code to generate the thresholded binary image is in 'combined_thresh.py', in particular the function `combined_thresh()`. For all images in 'test_images/\*.jpg', the thresholded binary version of that image is saved in 'output_images/binary_\*.png'.
 
 ### Perspective transform
 Given the thresholded binary image, the next step is to perform a perspective transform. The goal is to transform the image such that we get a "bird's eye view" of the lane, which enables us to fit a curved line to the lane lines (e.g. polynomial fit). Another thing this accomplishes is to "crop" an area of the original image that is most likely to have the lane line pixels.
@@ -79,9 +79,9 @@ To accomplish the perspective transform, I use OpenCV's `getPerspectiveTransform
 
 Here is the example image, after applying perspective transform:
 
-![warped](example_images/warped_test2.png)
+![warped](output_images/warped_test2.png)
 
-The code to perform perspective transform is in 'perspective_transform.py', in particular the function `perspective_transform()`. For all images in 'test_images/\*.jpg', the warped version of that image (i.e. post-perspective-transform) is saved in 'example_images/warped_\*.png'.
+The code to perform perspective transform is in 'perspective_transform.py', in particular the function `perspective_transform()`. For all images in 'test_images/\*.jpg', the warped version of that image (i.e. post-perspective-transform) is saved in 'output_images/warped_\*.png'.
 
 ### Polynomial fit
 Given the warped binary image from the previous step, I now fit a 2nd order polynomial to both left and right lane lines. In particular, I perform the following:
@@ -100,9 +100,9 @@ Given the polynomial fit calculated from the previous video frame, one performan
 
 Another enhancement to exploit the temporal correlation is to smooth-out the polynomial fit parameters. The benefit to doing so would be to make the detector more robust to noisy input. I used a simple moving average of the polynomial coefficients (3 values per lane line) for the most recent 5 video frames. The code to perform this smoothing is in the function `add_fit()` of the class `Line` in the file 'Line.py'. The `Line` class was used as a helper for this smoothing function specifically, and `Line` instances are global objects in 'line_fit.py'.
 
-Below is an illustration of the output of the polynomial fit, for our original example image. For all images in 'test_images/\*.jpg', the polynomial-fit-annotated version of that image is saved in 'example_images/polyfit_\*.png'.
+Below is an illustration of the output of the polynomial fit, for our original example image. For all images in 'test_images/\*.jpg', the polynomial-fit-annotated version of that image is saved in 'output_images/polyfit_\*.png'.
 
-![polyfit](example_images/polyfit_test2.png)
+![polyfit](output_images/polyfit_test2.png)
 
 ### Radius of curvature
 Given the polynomial fit for the left and right lane lines, I calculated the radius of curvature for each line according to formulas presented [here](http://www.intmath.com/applications-differentiation/8-radius-curvature.php). I also converted the distance units from pixels to meters, assuming 30 meters per 720 pixels in the vertical direction, and 3.7 meters per 700 pixels in the horizontal direction.
@@ -129,9 +129,9 @@ Given all the above, we can annotate the original image with the lane area, and 
 
 The code to perform the above is in the function `final_viz()` in 'line_fit.py'.
 
-Below is the final annotated version of our original image. For all images in 'test_images/\*.jpg', the final annotated version of that image is saved in 'example_images/annotated_\*.png'.
+Below is the final annotated version of our original image. For all images in 'test_images/\*.jpg', the final annotated version of that image is saved in 'output_images/annotated_\*.png'.
 
-![annotated](example_images/annotated_test2.png)
+![annotated](output_images/annotated_test2.png)
 
 ## Discussion
 This is an initial version of advanced computer-vision-based lane finding. There are multiple scenarios where this lane finder would not work. For example, the Udacity challenge video includes roads with cracks which could be mistaken as lane lines (see 'challenge_video.mp4'). Also, it is possible that other vehicles in front would trick the lane finder into thinking it was part of the lane. More work can be done to make the lane detector more robust, e.g. [deep-learning-based semantic segmentation](https://arxiv.org/pdf/1605.06211.pdf) to find pixels that are likely to be lane markers (then performing polyfit on only those pixels).
