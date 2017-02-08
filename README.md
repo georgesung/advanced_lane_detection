@@ -66,11 +66,11 @@ The next step is to create a thresholded binary image, taking the undistorted im
   * Convert the image from RGB space to HLS space, and threshold the S channel
 * Combine the above binary images to create the final binary image
 
-Here is the example image, transformed into a binary image:
+Here is the example image, transformed into a binary image by combining the above thresholded binary filters:
 
 ![binary](example_images/binary_test2.png)
 
-The code to generate the thresholded binary image is in 'combined_thresh.py', in particular the function `combined_thresh()`. For all images in 'test_images/*.jpg', the thresholded binary version of that image is saved in 'example_images/binary_*.png'.
+The code to generate the thresholded binary image is in 'combined_thresh.py', in particular the function `combined_thresh()`. For all images in 'test_images/\*.jpg', the thresholded binary version of that image is saved in 'example_images/binary_\*.png'.
 
 ### Perspective transform
 Given the thresholded binary image, the next step is to perform a perspective transform. The goal is to transform the image such that we get a "bird's eye view" of the lane, which enables us to fit a curved line to the lane lines (e.g. polynomial fit). Another thing this accomplishes is to "crop" an area of the original image that is most likely to have the lane line pixels.
@@ -81,7 +81,7 @@ Here is the example image, after applying perspective transform:
 
 ![warped](example_images/warped_test2.png)
 
-The code to perform perspective transform is in 'perspective_transform.py', in particular the function `perspective_transform()`. For all images in 'test_images/*.jpg', the warped version of that image (i.e. post-perspective-transform) is saved in 'example_images/warped_*.png'.
+The code to perform perspective transform is in 'perspective_transform.py', in particular the function `perspective_transform()`. For all images in 'test_images/\*.jpg', the warped version of that image (i.e. post-perspective-transform) is saved in 'example_images/warped_\*.png'.
 
 ### Polynomial fit
 Given the warped binary image from the previous step, I now fit a 2nd order polynomial to both left and right lane lines. In particular, I perform the following:
@@ -96,11 +96,11 @@ The code to perform the above is in the `line_fit()` function of 'line_fit.py'.
 
 Since our goal is to find lane lines from a video stream, we can take advantage of the temporal correlation between video frames.
 
-Given the polynomial fit calculated from the previous video frame, one performance enhancement I implemented is to search +/- 100 pixels horizontally from the previously predicted lane lines. Then we simply perform a 2nd order polynomial fit to those pixels found from our quick search. In case we don't find enough pixels, we can return an error (e.g. `return None`), and the function's caller would ignore the current frame (i.e. keep the lane lines the same) and be sure to perform a full search on the next frame. The code to perform an abbreviated search is in the `tune_fit()` function of 'line_fit.py'.
+Given the polynomial fit calculated from the previous video frame, one performance enhancement I implemented is to search +/- 100 pixels horizontally from the previously predicted lane lines. Then we simply perform a 2nd order polynomial fit to those pixels found from our quick search. In case we don't find enough pixels, we can return an error (e.g. `return None`), and the function's caller would ignore the current frame (i.e. keep the lane lines the same) and be sure to perform a full search on the next frame. Overall, this will improve the speed of the lane detector, useful if we were to use this detector in a production self-driving car. The code to perform an abbreviated search is in the `tune_fit()` function of 'line_fit.py'.
 
-Another enhancement to exploit the temporal correlation is to smooth-out the polynomial fit parameters. I used a simple moving average of the polynomial coefficients (3 values per lane line) for the most recent 5 video frames. The code to perform this smoothing is in the function `add_fit()` of the class `Line` in the file 'Line.py'. The `Line` class was used as a helper for this smoothing function specifically, and `Line` instances are global objects in 'line_fit.py'.
+Another enhancement to exploit the temporal correlation is to smooth-out the polynomial fit parameters. The benefit to doing so would be to make the detector more robust to noisy input. I used a simple moving average of the polynomial coefficients (3 values per lane line) for the most recent 5 video frames. The code to perform this smoothing is in the function `add_fit()` of the class `Line` in the file 'Line.py'. The `Line` class was used as a helper for this smoothing function specifically, and `Line` instances are global objects in 'line_fit.py'.
 
-Below is an illustration of the output of the polynomial fit, for our original example image. For all images in 'test_images/*.jpg', the polynomial-fit-annotated version of that image is saved in 'example_images/polyfit_*.png'.
+Below is an illustration of the output of the polynomial fit, for our original example image. For all images in 'test_images/\*.jpg', the polynomial-fit-annotated version of that image is saved in 'example_images/polyfit_\*.png'.
 
 ![polyfit](example_images/polyfit_test2.png)
 
@@ -114,7 +114,7 @@ The code to calculate the radius of curvature is in the function `calc_curve()` 
 ### Vehicle offset from lane center
 Given the polynomial fit for the left and right lane lines, I calculated the vehicle's offset from the lane center. The vehicle's offset from the center is annotated in the final video. I made the same assumptions as before when converting from pixels to meters.
 
-To calculate the vehicle's offset from the center of the lane line, I assumed the vehicle's center is the center of the image. I calculated the lane's center as the mean x value of the bottom x value of the left lane, and bottom x value of the right lane. The offset is simply the vehicle's center x value (i.e. center x value of the image) minus the lane's center x value.
+To calculate the vehicle's offset from the center of the lane line, I assumed the vehicle's center is the center of the image. I calculated the lane's center as the mean x value of the bottom x value of the left lane line, and bottom x value of the right lane line. The offset is simply the vehicle's center x value (i.e. center x value of the image) minus the lane's center x value.
 
 The code to calculate the vehicle's lane offset is in the function `calc_vehicle_offset()` in 'line_fit.py'.
 
@@ -123,15 +123,15 @@ Given all the above, we can annotate the original image with the lane area, and 
 
 * Create a blank image, and draw our polyfit lines (estimated left and right lane lines)
 * Fill the area between the lines (with green color)
-* Use the inverse warp matrix calculated from the perspective distortion stage, to "unwarp" the above such that it is aligned with the original image's perspective
+* Use the inverse warp matrix calculated from the perspective transform, to "unwarp" the above such that it is aligned with the original image's perspective
 * Overlay the above annotation on the original image
 * Add text to the original image to display lane curvature and vehicle offset
 
 The code to perform the above is in the function `final_viz()` in 'line_fit.py'.
 
-Below is the final annotated version of our original image. For all images in 'test_images/*.jpg', the final annotated version of that image is saved in 'example_images/annotated_*.png'.
+Below is the final annotated version of our original image. For all images in 'test_images/\*.jpg', the final annotated version of that image is saved in 'example_images/annotated_\*.png'.
 
 ![annotated](example_images/annotated_test2.png)
 
 ## Discussion
-This is just an initial version of advanced computer-vision-based lane finding. There are multiple scenarios where this lane finder would not work. For example, the Udacity challenge video includes roads with cracks which could be mistaken as lane lines (see 'challenge_video.mp4'). Also, it is possible that other vehicles in front would trick the lane finder into thinking it was part of the lane. More work can be done to make the lane detector more robust, e.g. [deep-learning-based semantic segmentation](https://arxiv.org/pdf/1605.06211.pdf) to find pixels that are likely to be lane markers (then performing polyfit on only those pixels).
+This is an initial version of advanced computer-vision-based lane finding. There are multiple scenarios where this lane finder would not work. For example, the Udacity challenge video includes roads with cracks which could be mistaken as lane lines (see 'challenge_video.mp4'). Also, it is possible that other vehicles in front would trick the lane finder into thinking it was part of the lane. More work can be done to make the lane detector more robust, e.g. [deep-learning-based semantic segmentation](https://arxiv.org/pdf/1605.06211.pdf) to find pixels that are likely to be lane markers (then performing polyfit on only those pixels).
