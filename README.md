@@ -1,6 +1,7 @@
 # Advanced Lane Detection
+![annotated](example_images/annotated_test2.png)
 ## Overview
-Detect lanes using computer vision techniques. This project is part of the [Udacity Self-Driving Car Nanodegree][https://www.udacity.com/drive], and much of the code is leveraged from the lecture notes.
+Detect lanes using computer vision techniques. This project is part of the [Udacity Self-Driving Car Nanodegree](https://www.udacity.com/drive), and much of the code is leveraged from the lecture notes.
 
 The following steps were performed for lane detection:
 
@@ -13,9 +14,7 @@ The following steps were performed for lane detection:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
-The following is the final video output: [https://youtu.be/lSd_WY1bqLw]
-
-The original video is 'project_video.mp4'.
+[Here](https://youtu.be/lSd_WY1bqLw) is the final video output on Youtube. The same video is 'out.mp4' in this repo. The original video is 'project_video.mp4'.
 
 ## Dependencies
 * Python 3.5
@@ -30,10 +29,10 @@ Run `python line_fit_video.py`. This will take the raw video file at 'project_vi
 To run the lane detector on arbitrary video files, update the last few lines of 'line_fit_video.py'.
 
 ## Camera calibration
-The camera was calibrated using the chessboard images at 'camera_cal/*.jpg'. The following steps were executed for each calibration image:
+The camera was calibrated using the chessboard images in 'camera_cal/*.jpg'. The following steps were performed for each calibration image:
 
 * Convert to grayscale
-* Find chessboard corners with OpenCV's `findChessboardCorners()` function, assuming 9x6 board
+* Find chessboard corners with OpenCV's `findChessboardCorners()` function, assuming a 9x6 board
 
 After the above steps were executed for all calibration images, I used OpenCV's `calibrateCamera()` function to calculate the distortion matrices. Using the distortion matrices, I undistort images using OpenCV's `undistort()` function.
 
@@ -55,7 +54,7 @@ Using the camera calibration matrices in 'calibrate_camera.p', I undistort the i
 
 ![undist](example_images/undistort_test2.png)
 
-The code to perform camera calibration is in 'calibrate_camera.py'. For all images in 'test_images/*.jpg', the undistorted version of that image is saved in 'example_images/undistort_*.png'.
+The code to perform camera calibration is in 'calibrate_camera.py'. For all images in 'test_images/\*.jpg', the undistorted version of that image is saved in 'example_images/undistort_\*.png'.
 
 ### Thresholded binary image
 The next step is to create a thresholded binary image, taking the undistorted image as input. The goal is to identify pixels that are likely to be part of the lane lines. In particular, I perform the following:
