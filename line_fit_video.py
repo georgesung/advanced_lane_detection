@@ -107,7 +107,5 @@ if __name__ == '__main__':
 	img_file = 'test_images/test2.jpg'
 	img = mpimg.imread(img_file)
 	result = annotate_image(img)
-	result = annotate_image(img)
-	result = annotate_image(img)
 	plt.imshow(result)
 	plt.show()
