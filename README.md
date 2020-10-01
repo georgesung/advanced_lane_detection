@@ -23,6 +23,7 @@ The following steps were performed for lane detection:
 * Matplotlib
 * Pickle
 
+
 ## How to run
 Run `python line_fit_video.py`. This will take the raw video file at 'project_video.mp4', and create an annotated output video at 'out.mp4'. Afterwards, it will display an example annotated image on screen.
 
@@ -66,7 +67,8 @@ The next step is to create a thresholded binary image, taking the undistorted im
   * Convert the image from RGB space to HLS space, and threshold the S channel
 * Combine the above binary images to create the final binary image
 
-Here is the example image, transformed into a binary image by combining the above thresholded binary filters:
+
+Here is an example image, transformed into a binary image by combining the above thresholded binary filters:
 
 ![binary](output_images/binary_test2.png)
 
@@ -135,3 +137,4 @@ Below is the final annotated version of our original image. For all images in 't
 
 ## Discussion
 This is an initial version of advanced computer-vision-based lane finding. There are multiple scenarios where this lane finder would not work. For example, the Udacity challenge video includes roads with cracks which could be mistaken as lane lines (see 'challenge_video.mp4'). Also, it is possible that other vehicles in front would trick the lane finder into thinking it was part of the lane. More work can be done to make the lane detector more robust, e.g. [deep-learning-based semantic segmentation](https://arxiv.org/pdf/1605.06211.pdf) to find pixels that are likely to be lane markers (then performing polyfit on only those pixels).
+
