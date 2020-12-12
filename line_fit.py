@@ -78,6 +78,10 @@ def line_fit(binary_warped):
 	# Fit a second order polynomial to each
 	left_fit = np.polyfit(lefty, leftx, 2)
 	right_fit = np.polyfit(righty, rightx, 2)
+	
+	# Marking the left lane as blue and right as red for easier reference
+	out_img[nonzeroy[left_lane_inds], nonzerox[left_lane_inds]] = [255, 0, 0]
+    	out_img[nonzeroy[right_lane_inds], nonzerox[right_lane_inds]] = [0, 0, 255]
 
 	# Return a dict of relevant variables
 	ret = {}
